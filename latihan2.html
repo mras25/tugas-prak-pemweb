@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan 2: Keranjang Belanja Interaktif</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .item-list {
+            margin: 20px 0;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .subtotal, .total {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .discount {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="content">
+            <h1>Keranjang Belanja Interaktif</h1>
+            <p>Tambahkan barang ke dalam keranjang, hitung total, dan dapatkan diskon otomatis berdasarkan aturan tertentu.</p>
+
+            <form id="itemForm">
+                <label for="itemSelect">Pilih Barang:</label>
+                <select id="itemSelect">
+                    <option value="Indomie,3000">Indomie - Rp 3.000</option>
+                    <option value="Beras 3kg,50000">Beras 3kg - Rp 50.000</option>
+                    <option value="Gas LPG,150000">Gas LPG - Rp 150.000</option>
+                    <option value="Hotwheels,30000">Hotwheels - Rp 30.000</option>
+                    <option value="Permen,2000">Permen - Rp 2.000</option>
+                    <option value="Baju Kaos,75000">Baju Kaos - Rp 75.000</option>
+                    <option value="Ciki,5000">Ciki - Rp 5.000</option>
+                    <option value="Susu,25000">Susu - Rp 25.000</option>
+                </select>
+
+                <label for="extraDiscount">Diskon Tambahan (%):</label>
+                <input type="number" id="extraDiscount" min="0" max="100" value="0">
+                
+                <button type="button" onclick="addItem()">Tambah Barang</button>
+            </form>
+
+            <div class="item-list" id="itemList"></div>
+
+            <div class="subtotal" id="subtotal">Subtotal: Rp 0</div>
+            <div class="total" id="total">Total Setelah Diskon: Rp 0</div>
+        </div>
+    </div>
+
+    <script>
+        // Daftar barang dalam keranjang
+        let items = [];
+
+        function displayItems() {
+            const itemList = document.getElementById("itemList");
+            itemList.innerHTML = "";
+
+            items.forEach((item, index) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item";
+                itemDiv.innerHTML = `
+                    <span>${item.name} - Rp ${item.price.toLocaleString()}</span>
+                    <button onclick="removeItem(${index})">Hapus</button>
+                `;
+                itemList.appendChild(itemDiv);
+            });
+
+            calculateTotal();
+        }
+
+        function addItem() {
+            const selectedItem = document.getElementById("itemSelect").value.split(",");
+            const itemName = selectedItem[0];
+            const itemPrice = parseFloat(selectedItem[1]);
+
+            items.push({ name: itemName, price: itemPrice });
+            displayItems();
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            displayItems();
+        }
+
+        function calculateTotal() {
+            let subtotal = items.reduce((total, item) => total + item.price, 0);
+            let discount = 0;
+
+            // Terapkan diskon otomatis berdasarkan subtotal
+            if (subtotal > 2000000) {
+                discount = 0.15;
+            } else if (subtotal > 1000000) {
+                discount = 0.10;
+            }
+
+            // Tambahan diskon 5% untuk lebih dari 5 barang
+            if (items.length > 5) {
+                discount += 0.05;
+            }
+
+            // Diskon tambahan yang diinput oleh pengguna
+            const extraDiscount = parseFloat(document.getElementById("extraDiscount").value) || 0;
+            discount += extraDiscount / 100;
+
+            const totalAfterDiscount = subtotal * (1 - discount);
+            document.getElementById("subtotal").textContent = `Subtotal: Rp ${subtotal.toLocaleString()}`;
+            document.getElementById("total").innerHTML = `Total Setelah Diskon: <span class="discount">Rp ${totalAfterDiscount.toLocaleString()}</span>`;
+        }
+
+        // Tampilkan daftar barang saat halaman dimuat
+        displayItems();
+    </script>
+
+</body>
+</html>

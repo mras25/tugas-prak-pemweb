@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan 1: Kalkulator Nilai Mahasiswa</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            font-weight: bold;
+        }
+        .pass {
+            color: green;
+        }
+        .fail {
+            color: red;
+        }
+        label, input {
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="content">
+            <h1>Kalkulator Nilai Mahasiswa</h1>
+            <p>Masukkan nilai untuk Tugas, UTS, dan UAS untuk menghitung rata-rata tertimbang dan status kelulusan.</p>
+
+            <form id="gradeForm">
+                <label for="assignment">Nilai Tugas (30%):</label>
+                <input type="number" id="assignment" min="0" max="100" required>
+
+                <label for="midExam">Nilai UTS (30%):</label>
+                <input type="number" id="midExam" min="0" max="100" required>
+
+                <label for="finalExam">Nilai UAS (40%):</label>
+                <input type="number" id="finalExam" min="0" max="100" required>
+
+                <button type="button" onclick="calculateGrade()">Hitung Nilai</button>
+            </form>
+
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateGrade() {
+            // Mendapatkan nilai input
+            const assignmentScore = parseFloat(document.getElementById("assignment").value);
+            const midExamScore = parseFloat(document.getElementById("midExam").value);
+            const finalExamScore = parseFloat(document.getElementById("finalExam").value);
+
+            // Validasi input antara 0 dan 100
+            if (isNaN(assignmentScore) || isNaN(midExamScore) || isNaN(finalExamScore) ||
+                assignmentScore < 0 || assignmentScore > 100 ||
+                midExamScore < 0 || midExamScore > 100 ||
+                finalExamScore < 0 || finalExamScore > 100) {
+                alert("Masukkan nilai valid antara 0 dan 100 untuk semua komponen.");
+                return;
+            }
+
+            // Persentase bobot
+            const assignmentWeight = 0.3;
+            const midExamWeight = 0.3;
+            const finalExamWeight = 0.4;
+
+            // Menghitung nilai rata-rata tertimbang
+            let weightedAverage = (assignmentScore * assignmentWeight) +
+                                  (midExamScore * midExamWeight) +
+                                  (finalExamScore * finalExamWeight);
+
+            // Menentukan nilai huruf dan status lulus/gagal
+            let grade, status;
+            if (weightedAverage >= 90) {
+                grade = 'A';
+            } else if (weightedAverage >= 80) {
+                grade = 'B';
+            } else if (weightedAverage >= 70) {
+                grade = 'C';
+            } else if (weightedAverage >= 60) {
+                grade = 'D';
+            } else {
+                grade = 'E';
+            }
+
+            if (weightedAverage >= 60) {
+                status = `<span class="pass">Lulus</span>`;
+            } else {
+                status = `<span class="fail">Gagal</span>`;
+            }
+
+            // Menampilkan hasil
+            document.getElementById("result").innerHTML = `
+                <p>Nilai Rata-rata Tertimbang: ${weightedAverage.toFixed(2)}</p>
+                <p>Nilai Huruf: ${grade}</p>
+                <p>Status: ${status}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
